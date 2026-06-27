@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 
+        Warkop Majoe - IMK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- PALET WARNA COKLAT & PUTIH (EARTH TONE) --- */
+        :root {
+            --brown-primary: #A98467;   
+            --brown-dark: #71553D;      
+            --brown-light: #F0E6D2;     
+            --dark-text: #3D342E;       
+            --white: #FFFFFF;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--dark-text);
+        }
+
+        body {
+            background-color: #FAF7F2; 
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR NAVIGASI --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--brown-light);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 2px solid var(--brown-primary);
+            position: fixed; 
+            height: 100vh;
+            z-index: 10;
+        }
+
+        .sidebar h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            color: var(--brown-dark);
+        }
+
+        .sidebar menu {
+            list-style: none;
+        }
+
+        .sidebar menu li {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar menu li:hover, .sidebar menu li.active {
+            background-color: var(--brown-primary);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+        
+        .sidebar menu li:hover *, .sidebar menu li.active * {
+            color: var(--white);
+        }
+
+        /* --- KONTEN UTAMA --- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            margin-left: 260px; 
+        }
+
+        .header {
+            margin-bottom: 30px;
+            border-bottom: 2px dashed var(--brown-primary);
+            padding-bottom: 15px;
+        }
+
+        .grid-pos {
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr;
+            gap: 25px;
+        }
+
+        .panel {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(113, 85, 61, 0.08);
+            border: 1px solid var(--brown-light);
+            scroll-margin-top: 30px; 
+            margin-bottom: 25px;
+        }
+
+        .panel h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-left: 4px solid var(--brown-primary);
+            padding-left: 10px;
+            color: var(--brown-dark);
+        }
+
+        /* --- KARTU RINGKASAN PEMBUKUAN --- */
+        .grid-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-summary {
+            padding: 15px;
+            border-radius: 10px;
+            background: #FFFDF9;
+            border: 1px solid var(--brown-light);
+        }
+
+        .card-summary span { font-size: 12px; font-weight: 600; color: #7A6F68; }
+        .card-summary h2 { font-size: 20px; margin-top: 5px; font-weight: 700; }
+
+        /* --- INPUT PENCARIAN MENU --- */
+        .search-container {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 1px solid var(--brown-primary);
+            border-radius: 10px;
+            outline: none;
+            background-color: #FFFDF9;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 8px rgba(169, 132, 103, 0.3);
+            border-color: var(--brown-dark);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        /* --- CONTAINER SCROLL UTK MENU --- */
+        .menu-scroll-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+            margin-bottom: 15px;
+        }
+
+        .menu-list-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .menu-list-table tr { border-bottom: 1px solid #FAF7F2; }
+        .menu-row-hidden { display: none !important; }
+        .menu-list-table tr:hover { background-color: #FCFAf7; }
+        .menu-list-table td { padding: 10px 8px; vertical-align: middle; }
+        .menu-icon { font-size: 20px; width: 35px; text-align: center; }
+        
+        .menu-details h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+        .menu-details span { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        
+        /* WARNA BADGE KATEGORI */
+        .tag-spesial { background-color: #FFE5E5; color: #D87A7A; }
+        .tag-indomie { background-color: #E2EFCB; color: #4F6422; }
+        .tag-topping { background-color: #E6F4F8; color: #2B7A94; }
+        .tag-cemilan { background-color: #FFF2CC; color: #B2A100; }
+        .tag-kopi { background-color: #F0E6D2; color: #71553D; }
+        .tag-susu { background-color: #E8E8E8; color: #555555; }
+        .tag-minuman { background-color: #E2F0D9; color: #385723; }
+
+        .menu-harga { font-weight: 700; font-size: 14px; text-align: right; width: 95px; }
+        .menu-aksi { text-align: right; width: 85px; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+
+        /* --- FORM & INPUT --- */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--brown-primary);
+            border-radius: 8px;
+            outline: none;
+            background-color: #FFFDF9;
+        }
+
+        /* --- TOMBOL --- */
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--brown-light);
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        .btn:hover { background-color: var(--brown-primary); color: var(--white); }
+        .btn-pink { background-color: var(--brown-dark); color: var(--white); }
+        .btn-pink:hover { background-color: #553F2D; }
+
+        /* --- TABEL DATA --- */
+        .table-responsive { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th, td { padding: 12px; border-bottom: 1px solid var(--brown-light); }
+        th { background-color: var(--brown-light); font-weight: 600; }
+
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+        .badge-masuk, .badge-pendapatan { background-color: #E2EFCB; color: #4F6422; }
+        .badge-keluar, .badge-pengeluaran { background-color: #F7D6D6; color: #722525; }
+
+        /* --- STRUK AREA DESIGN --- */
+        .struk-header-print { display: none; } 
+
+        .keranjang-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--brown-light);
+            font-size: 14px;
+        }
+
+        .total-bayar {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid var(--brown-primary);
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* PRINT MEDIA ATTRIBUTES */
+        @media print {
+            body { background: #fff; min-height: auto; }
+            .sidebar, .main-content .header, .panel:not(.panel-struk), .form-group, .btn, style, h3, .form-tambah-menu-cepat {
+                display: none !important;
+            }
+            .main-content { margin-left: 0 !important; padding: 0 !important; width: 100% !important; }
+            .grid-pos { display: block !important; width: 100% !important; }
+            .panel-struk { box-shadow: none !important; border: none !important; padding: 0 !important; width: 76mm !important; margin: 0 auto; }
+            .struk-header-print { display: block !important; text-align: center; margin-bottom: 15px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
+            .struk-header-print h2 { font-size: 18px; font-weight: 700; }
+            .struk-header-print p { font-size: 12px; margin-top: 2px; }
+            .keranjang-item { border-bottom: 1px dashed #000 !important; font-family: monospace !important; }
+            .total-bayar { border-top: 1px double #000 !important; font-family: monospace !important; }
+            * { color: #000 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR NAVIGASI -->
+    <div class="sidebar">
+        <h2>☕ Warkop Majoe</h2>
+        <menu>
+            <li id="menu-pos" class="active" onclick="pindahHalaman('bagian-pos', 'menu-pos')">🧾 Kasir Penjualan</li>
+            <li id="menu-pembukuan" onclick="pindahHalaman('bagian-pembukuan', 'menu-pembukuan')">📊 Buku Keuangan</li>
+            <li id="menu-inv" onclick="pindahHalaman('bagian-inventori', 'menu-inv')">📦 Stok Bahan Baku</li>
+            <li id="menu-restock" onclick="pindahHalaman('bagian-restock', 'menu-restock')">🛒 Belanja Pasar (Kulakan)</li>
+        </menu>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Sistem Kasir & Pembukuan Warkop Majoe</h1>
+            <p>Aplikasi Terintegrasi: Penjualan, Inventori, Kulakan, dan Laporan Keuangan Otomatis</p>
+        </div>
+
+        <!-- ================= BAGIAN POS (KASIR PENJUALAN) ================= -->
+        <div class="grid-pos" id="bagian-pos">
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                
+                <!-- Input Info Pelanggan -->
+                <div class="panel">
+                    <h3>Proses Penjualan (Pesanan Masuk)</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label>Tanggal Transaksi</label>
+                            <input type="date" id="pos-tanggal">
+                        </div>
+                        <div class="form-group">
+                            <label>Nomor Meja / Nama Pembeli</label>
+                            <input type="text" id="pos-pelanggan" placeholder="Contoh: Meja 03 / Bang Rian" onkeyup="sinkronisasiNamaStruk()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daftar Menu Hidangan -->
+                <div class="panel">
+                    <h3>Daftar Menu Makanan & Minuman</h3>
+                    <div class="search-container">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="input-cari-menu" class="search-input" placeholder="Cari menu hidangan warkop..." onkeyup="filterMenuWarkop()">
+                    </div>
+
+                    <div class="menu-scroll-container">
+                        <table class="menu-list-table" id="tabel-menu-warkop">
+                            <tbody id="body-tabel-menu">
+                                <!-- SPESIAL MENU -->
+                                <tr class="menu-item-row"><td class="menu-icon">🥣</td><td class="menu-details"><h4>Cuanki</h4><span class="tag-spesial">Spesial</span></td><td class="menu-harga">Rp 10.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Cuanki', 10000)">+ Pilih</button></td></tr>
+                                
+                                <!-- INDOMIE GORENG -->
+                                <tr class="menu-item-row"><td class="menu-icon">🍜</td><td class="menu-details"><h4>Indomie Goreng Original</h4><span class="tag-indomie">Indomie</span></td><td class="menu-harga">Rp 7.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Indomie Goreng Original', 7000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍜</td><td class="menu-details"><h4>Indomie Goreng Double</h4><span class="tag-indomie">Indomie</span></td><td class="menu-harga">Rp 12.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Indomie Goreng Double', 12000)">+ Pilih</button></td></tr>
+                                
+                                <!-- INDOMIE KUAH -->
+                                <tr class="menu-item-row"><td class="menu-icon">🍜</td><td class="menu-details"><h4>Indomie Kuah Original</h4><span class="tag-indomie">Indomie</span></td><td class="menu-harga">Rp 7.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Indomie Kuah Original', 7000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍜</td><td class="menu-details"><h4>Indomie Kuah Double</h4><span class="tag-indomie">Indomie</span></td><td class="menu-harga">Rp 12.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Indomie Kuah Double', 12000)">+ Pilih</button></td></tr>
+                                
+                                <!-- TOPPING -->
+                                <tr class="menu-item-row"><td class="menu-icon">🧀</td><td class="menu-details"><h4>Topping Keju</h4><span class="tag-topping">Topping</span></td><td class="menu-harga">Rp 3.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Topping Keju', 3000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍳</td><td class="menu-details"><h4>Topping Telur</h4><span class="tag-topping">Topping</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Topping Telur', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🥩</td><td class="menu-details"><h4>Topping Kornet</h4><span class="tag-topping">Topping</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Topping Kornet', 5000)">+ Pilih</button></td></tr>
+                                
+                                <!-- ANEKA CEMILAN -->
+                                <tr class="menu-item-row"><td class="menu-icon">🍢</td><td class="menu-details"><h4>Otak - Otak</h4><span class="tag-cemilan">Cemilan</span></td><td class="menu-harga">Rp 12.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Otak - Otak', 12000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍟</td><td class="menu-details"><h4>Sosis Goreng</h4><span class="tag-cemilan">Cemilan</span></td><td class="menu-harga">Rp 12.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Sosis Goreng', 12000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍟</td><td class="menu-details"><h4>Kentang Goreng</h4><span class="tag-cemilan">Cemilan</span></td><td class="menu-harga">Rp 12.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Kentang Goreng', 12000)">+ Pilih</button></td></tr>
+                                
+                                <!-- PISANG BAKAR -->
+                                <tr class="menu-item-row"><td class="menu-icon">🍌</td><td class="menu-details"><h4>Pisang Bakar Coklat</h4><span class="tag-cemilan">Pisang</span></td><td class="menu-harga">Rp 10.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Pisang Bakar Coklat', 10000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍌</td><td class="menu-details"><h4>Pisang Bakar Keju</h4><span class="tag-cemilan">Pisang</span></td><td class="menu-harga">Rp 10.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Pisang Bakar Keju', 10000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍌</td><td class="menu-details"><h4>Pisang Bakar Coklat Keju</h4><span class="tag-cemilan">Pisang</span></td><td class="menu-harga">Rp 12.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Pisang Bakar Coklat Keju', 12000)">+ Pilih</button></td></tr>
+                                
+                                <!-- ROTI BAKAR -->
+                                <tr class="menu-item-row"><td class="menu-icon">🍞</td><td class="menu-details"><h4>Roti Bakar Coklat</h4><span class="tag-cemilan">Roti</span></td><td class="menu-harga">Rp 10.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Roti Bakar Coklat', 10000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍞</td><td class="menu-details"><h4>Roti Bakar Keju</h4><span class="tag-cemilan">Roti</span></td><td class="menu-harga">Rp 10.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Roti Bakar Keju', 10000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍞</td><td class="menu-details"><h4>Roti Bakar Coklat Keju</h4><span class="tag-cemilan">Roti</span></td><td class="menu-harga">Rp 12.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Roti Bakar Coklat Keju', 12000)">+ Pilih</button></td></tr>
+                                
+                                <!-- KOPI -->
+                                <tr class="menu-item-row"><td class="menu-icon">☕</td><td class="menu-details"><h4>Kopi Hitam</h4><span class="tag-kopi">Kopi</span></td><td class="menu-harga">Rp 4.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Kopi Hitam', 4000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">☕</td><td class="menu-details"><h4>ABC Susu</h4><span class="tag-kopi">Kopi</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('ABC Susu', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">☕</td><td class="menu-details"><h4>Torabika Cappucino</h4><span class="tag-kopi">Kopi</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Torabika Cappucino', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">☕</td><td class="menu-details"><h4>Torabika Creamy Latte</h4><span class="tag-kopi">Kopi</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Torabika Creamy Latte', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">☕</td><td class="menu-details"><h4>Luwak White Coffee</h4><span class="tag-kopi">Kopi</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Luwak White Coffee', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">☕</td><td class="menu-details"><h4>Indocafe Mix</h4><span class="tag-kopi">Kopi</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Indocafe Mix', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">☕</td><td class="menu-details"><h4>Good Day</h4><span class="tag-kopi">Kopi</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Good Day', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">☕</td><td class="menu-details"><h4>Kopi Oplet</h4><span class="tag-kopi">Kopi</span></td><td class="menu-harga">Rp 3.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Kopi Oplet', 3000)">+ Pilih</button></td></tr>
+                                
+                                <!-- SUSU -->
+                                <tr class="menu-item-row"><td class="menu-icon">🥛</td><td class="menu-details"><h4>Susu Putih</h4><span class="tag-susu">Susu</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Susu Putih', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🥛</td><td class="menu-details"><h4>Susu Cokelat</h4><span class="tag-susu">Susu</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Susu Cokelat', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🥛</td><td class="menu-details"><h4>Chocholatos Cokelat</h4><span class="tag-susu">Susu</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Chocholatos Cokelat', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🥛</td><td class="menu-details"><h4>Chocholatos Matcha</h4><span class="tag-susu">Susu</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Chocholatos Matcha', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🥛</td><td class="menu-details"><h4>Ovaltine</h4><span class="tag-susu">Susu</span></td><td class="menu-harga">Rp 7.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Ovaltine', 7000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🥛</td><td class="menu-details"><h4>Milo</h4><span class="tag-susu">Susu</span></td><td class="menu-harga">Rp 7.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Milo', 7000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🥛</td><td class="menu-details"><h4>Dancow</h4><span class="tag-susu">Susu</span></td><td class="menu-harga">Rp 7.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Dancow', 7000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🥛</td><td class="menu-details"><h4>Beng - Beng Drink</h4><span class="tag-susu">Susu</span></td><td class="menu-harga">Rp 7.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Beng - Beng Drink', 7000)">+ Pilih</button></td></tr>
+                                
+                                <!-- MINUMAN LAIN NYA -->
+                                <tr class="menu-item-row"><td class="menu-icon">🍹</td><td class="menu-details"><h4>Teh Tawar</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 2.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Teh Tawar', 2000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍹</td><td class="menu-details"><h4>Teh Manis</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 3.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Teh Manis', 3000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍼</td><td class="menu-details"><h4>Air Mineral</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Air Mineral', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍹</td><td class="menu-details"><h4>Nutrisari</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 4.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Nutrisari', 4000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍹</td><td class="menu-details"><h4>Tea Jus</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 3.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Tea Jus', 3000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍹</td><td class="menu-details"><h4>Teh Tarik</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Teh Tarik', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍹</td><td class="menu-details"><h4>Max Tea Lemon</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Max Tea Lemon', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍵</td><td class="menu-details"><h4>Wedang Jahe</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Wedang Jahe', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍵</td><td class="menu-details"><h4>Susu Jahe</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Susu Jahe', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">🍹</td><td class="menu-details"><h4>Soda Susu</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 8.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Soda Susu', 8000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">⚡</td><td class="menu-details"><h4>Extra Joss</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Extra Joss', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">⚡</td><td class="menu-details"><h4>Extra Joss Susu</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 8.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Extra Joss Susu', 8000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">⚡</td><td class="menu-details"><h4>Kukubima</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 5.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Kukubima', 5000)">+ Pilih</button></td></tr>
+                                <tr class="menu-item-row"><td class="menu-icon">⚡</td><td class="menu-details"><h4>Kukubima Susu</h4><span class="tag-minuman">Minuman</span></td><td class="menu-harga">Rp 8.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Kukubima Susu', 8000)">+ Pilih</button></td></tr>
+                                
+                                <!-- TAMBAH ES (NOTES) -->
+                                <tr class="menu-item-row"><td class="menu-icon">❄️</td><td class="menu-details"><h4>Minuman Tambah Es</h4><span class="tag-topping">Notes</span></td><td class="menu-harga">Rp 1.000</td><td class="menu-aksi"><button class="btn btn-sm" onclick="tambahKeKeranjang('Minuman Tambah Es', 1000)">+ Pilih</button></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ================= BARU: FORM TAMBAH MENU MANDIRI ================= -->
+                    <div class="form-tambah-menu-cepat" style="border-top: 2px dashed var(--brown-primary); padding-top: 15px; margin-top: 10px;">
+                        <h4 style="font-size: 14px; margin-bottom: 10px; color: var(--brown-dark);">➕ Tambah Menu Hidangan Baru</h4>
+                        <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 0.8fr; gap: 10px; align-items: flex-end;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <input type="text" id="add-nama-menu" placeholder="Nama menu baru...">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <input type="number" id="add-harga-menu" placeholder="Harga (Contoh: 8000)">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <select id="add-kategori-menu">
+                                    <option value="tag-minuman">🍹 Minuman</option>
+                                    <option value="tag-kopi">☕ Kopi</option>
+                                    <option value="tag-indomie">🍜 Indomie</option>
+                                    <option value="tag-cemilan">🍢 Cemilan / Makanan</option>
+                                    <option value="tag-susu">🥛 Susu</option>
+                                    <option value="tag-topping">🧀 Topping / Notes</option>
+                                    <option value="tag-spesial">🥣 Spesial Menu</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-sm btn-pink" style="padding: 11px;" onclick="tambahMenuBaruKeTabel()">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Struk Pesanan Terintegrasi -->
+            <div class="panel panel-struk">
+                <div class="struk-header-print">
+                    <h2>WARKOP MAJOE</h2>
+                    <p>Pusat Kuliner & Sembako Tradisional</p>
+                    <div style="border-bottom: 1px dashed #000; margin-top:10px; margin-bottom: 8px;"></div>
+                    <p style="font-size: 12px; text-align: left;" id="print-tanggal-nota">Tanggal: -</p>
+                    <p style="font-size: 12px; text-align: left;" id="print-nama-nota">Pembeli: -</p>
+                    <p style="font-size: 12px; text-align: left;" id="print-metode-nota">Metode: -</p>
+                    <div style="border-bottom: 1px dashed #000; margin-top:8px;"></div>
+                </div>
+
+                <h3>Struk Pesanan</h3>
+                <div id="keranjang-list">
+                    <p style="color:#aaa; font-size:13px; text-align:center; padding:20px 0;">Belum ada pesanan.</p>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Metode Pembayaran</label>
+                    <select id="pos-metode" onchange="sinkronisasiNamaStruk()">
+                        <option>Tunai (Cash)</option>
+                        <option>QRIS / Dana / OVO</option>
+                        <option>Transfer Bank</option>
+                    </select>
+                </div>
+
+                <div class="total-bayar">
+                    <span>TOTAL TAGIHAN:</span>
+                    <span id="total-harga">Rp 0</span>
+                </div>
+                
+                <button class="btn btn-pink" style="margin-top: 15px; background-color: #4F6422;" onclick="prosesBayarDanCetak()">
+                    🖨️ Selesaikan Pembayaran & Cetak Struk
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= BAGIAN PEMBUKUAN ================= -->
+        <div class="panel" id="bagian-pembukuan">
+            <h3>📊 Buku Pembukuan Keuangan Warung</h3>
+            <p style="font-size: 13px; color: #7A6F68; margin-bottom: 20px;">Semua kas masuk dari penjualan kasir dan pengeluaran dari kulakan pasar dicatat rapi secara real-time di sini.</p>
+            
+            <!-- Dashboard Ringkasan Kas -->
+            <div class="grid-summary">
+                <div class="card-summary" style="border-left: 5px solid #4F6422;">
+                    <span>Total Pendapatan (Omzet)</span>
+                    <h2 id="summary-pendapatan" style="color: #4F6422;">Rp 0</h2>
+                </div>
+                <div class="card-summary" style="border-left: 5px solid #722525;">
+                    <span>Total Pengeluaran (Beban)</span>
+                    <h2 id="summary-pengeluaran" style="color: #722525;">Rp 0</h2>
+                </div>
+                <div class="card-summary" style="border-left: 5px solid #A98467;">
+                    <span>Saldo Kas Bersih (Profit)</span>
+                    <h2 id="summary-saldo">Rp 0</h2>
+                </div>
+            </div>
+
+            <h4>Jurnal Riwayat Arus Kas</h4>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Kategori Transaksi</th>
+                            <th>Keterangan / Detail Nota</th>
+                            <th>Jenis Kas</th>
+                            <th>Nominal Pembukuan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-jurnal-pembukuan">
+                        <tr>
+                            <td>2026-06-26</td>
+                            <td>Saldo Awal</td>
+                            <td>Modal kas laci meja kasir awal pekan</td>
+                            <td><span class="badge badge-pendapatan">Masuk</span></td>
+                            <td><strong>Rp 500.000</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ================= BAGIAN INVENTORI ================= -->
+        <div class="panel" id="bagian-inventori">
+            <h3>Sistem Inventori (Keluar Masuk Logistik Warung)</h3>
+            <p style="font-size: 13px; color: #7A6F68; margin-bottom: 20px;">Formulir untuk memantau stok fisik operasional harian.</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 15px; align-items: flex-end; margin-bottom: 25px;">
+                <div class="form-group" style="margin-bottom:0;"><label>Jenis</label>
+                    <select id="inv-jenis"><option value="Masuk">Bahan Masuk</option><option value="Keluar">Bahan Keluar</option></select>
+                </div>
+                <div class="form-group" style="margin-bottom:0;"><label>Nama Bahan Baku</label><input type="text" id="inv-nama" placeholder="Contoh: Dus Indomie"></div>
+                <div class="form-group" style="margin-bottom:0;"><label>Jumlah</label><input type="text" id="inv-jumlah" placeholder="Contoh: 3 Dus"></div>
+                <div class="form-group" style="margin-bottom:0;"><label>Keterangan</label><input type="text" id="inv-catatan" placeholder="Catatan"></div>
+                <button class="btn" style="width: auto; padding: 12px 25px;" onclick="tambahStok()">Simpan Log</button>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Tanggal</th><th>Nama Bahan</th><th>Status</th><th>Jumlah</th><th>Info</th></tr></thead>
+                    <tbody id="tabel-stok">
+                        <tr><td>2026-06-26</td><td>Indomie Goreng</td><td><span class="badge badge-masuk">Masuk</span></td><td>3 Dus</td><td>Restock pasokan</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ================= BAGIAN KULAKAN ================= -->
+        <div class="panel" id="bagian-restock">
+            <h3>Proses Pembelian Barang (Kulakan / Restock Mitra)</h3>
+            <p style="font-size: 13px; color: #7A6F68; margin-bottom: 20px;">Pencatatan nota ketika warkop membeli pasokan grosir ke distributor, otomatis memotong kas di pembukuan.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <div class="form-group">
+                        <label>Distributor / Supplier Mitra</label>
+                        <select id="kulakan-supplier">
+                            <option>Agen Grosir Sembako Utama</option>
+                            <option>Distributor Es Batu Kristal Higienis</option>
+                            <option>Pangkalan Gas LPG Berkah</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Item Kulakan Berita Acara</label>
+                        <input type="text" id="kulakan-item" placeholder="Misal: 5 Karton Indomie, 10 Renteng Kopi Oplet">
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Total Pengeluaran Nota (Rp)</label>
+                        <input type="number" id="kulakan-harga" placeholder="Contoh: 350000">
+                    </div>
+                    <div class="form-group">
+                        <label>Sistem Pembayaran Kulakan</label>
+                        <select id="kulakan-metode">
+                            <option>Lunas (Cash/Transfer)</option>
+                            <option>Tempo / Utang Dagang</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-pink" style="margin-top: 10px;" onclick="prosesKulakanKePembukuan()">Kirim Transaksi Pembelian</button>
+        </div>
+
+    </div>
+
+    <!-- ================= LOGIKA JAVASCRIPT INTERAKTIF ================= -->
+    <script>
+        // Variabel Finansial Global
+        let totalPendapatan = 500000; // diisi modal awal 500rb
+        let totalPengeluaran = 0;
+        let keranjang = {};
+        let total = 0;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            let hariIni = new Date().toISOString().split('T')[0];
+            document.getElementById('pos-tanggal').value = hariIni;
+            hitungUlangDashboard();
+        });
+
+        function hitungUlangDashboard() {
+            let profitBersih = totalPendapatan - totalPengeluaran;
+            document.getElementById('summary-pendapatan').innerText = 'Rp ' + totalPendapatan.toLocaleString('id-ID');
+            document.getElementById('summary-pengeluaran').innerText = 'Rp ' + totalPengeluaran.toLocaleString('id-ID');
+            document.getElementById('summary-saldo').innerText = 'Rp ' + profitBersih.toLocaleString('id-ID');
+        }
+
+        // FUNGSI BARU: MENAMBAH MENU SECARA DINAMIS
+        function tambahMenuBaruKeTabel() {
+            let nama = document.getElementById('add-nama-menu').value;
+            let harga = document.getElementById('add-harga-menu').value;
+            let kategoriClass = document.getElementById('add-kategori-menu').value;
+            let kategoriTeks = document.getElementById('add-kategori-menu').options[document.getElementById('add-kategori-menu').selectedIndex].text.substring(2);
+
+            if (!nama || !harga) {
+                alert('Tolong ketik Nama Menu dan Nominal Harga barunya dulu ya bos!');
+                return;
+            }
+
+            let nominalHarga = parseInt(harga);
+            let ikon = "🍽️"; // Ikon bawaan/default
+
+            // Penentuan ikon berdasarkan kategori pilihan
+            if(kategoriClass.includes('minuman') || kategoriClass.includes('kopi')) ikon = "🍹";
+            if(kategoriClass.includes('indomie')) ikon = "🍜";
+            if(kategoriClass.includes('susu')) ikon = "🥛";
+            if(kategoriClass.includes('cemilan')) ikon = "🍢";
+
+            let barisBaruHTML = `
+                <tr class="menu-item-row">
+                    <td class="menu-icon">${ikon}</td>
+                    <td class="menu-details">
+                        <h4>${nama}</h4>
+                        <span class="${kategoriClass}">${kategoriTeks}</span>
+                    </td>
+                    <td class="menu-harga">Rp ${nominalHarga.toLocaleString('id-ID')}</td>
+                    <td class="menu-aksi">
+                        <button class="btn btn-sm" onclick="tambahKeKeranjang('${nama.replace(/'/g, "\\'")}', ${nominalHarga})">+ Pilih</button>
+                    </td>
+                </tr>
+            `;
+
+            // Dimasukkan ke paling atas daftar tabel menu warkop
+            document.getElementById('body-tabel-menu').insertAdjacentHTML('afterbegin', barisBaruHTML);
+
+            // Bersihkan input form
+            document.getElementById('add-nama-menu').value = '';
+            document.getElementById('add-harga-menu').value = '';
+            
+            alert(`✅ Menu "${nama}" berhasil didaftarkan ke sistem kasir!`);
+        }
+
+        function masukkanKeJurnal(kategori, keterangan, jenis, nominal) {
+            let tbody = document.getElementById('tabel-jurnal-pembukuan');
+            let hariIni = document.getElementById('pos-tanggal').value || new Date().toISOString().split('T')[0];
+            
+            let badgeClass = jenis === 'Masuk' ? 'badge-pendapatan' : 'badge-pengeluaran';
+            
+            let barisJurnal = `
+                <tr>
+                    <td>${hariIni}</td>
+                    <td><strong>${kategori}</strong></td>
+                    <td>${keterangan}</td>
+                    <td><span class="badge ${badgeClass}">${jenis === 'Masuk' ? 'Masuk' : 'Keluar'}</span></td>
+                    <td><strong>Rp ${parseInt(nominal).toLocaleString('id-ID')}</strong></td>
+                </tr>
+            `;
+            tbody.insertAdjacentHTML('afterbegin', barisJurnal);
+
+            if (jenis === 'Masuk') totalPendapatan += parseInt(nominal);
+            if (jenis === 'Keluar') totalPengeluaran += parseInt(nominal);
+            
+            hitungUlangDashboard();
+        }
+
+        function prosesBayarDanCetak() {
+            let pelanggan = document.getElementById('pos-pelanggan').value || 'Pelanggan Umum';
+            let metode = document.getElementById('pos-metode').value;
+            
+            if (total === 0) {
+                alert('Pesanan masih kosong, pilih menu kuliner dulu ya!');
+                return;
+            }
+
+            sinkronisasiNamaStruk();
+            window.print();
+
+            // Masuk pembukuan otomatis
+            masukkanKeJurnal('Penjualan POS', `Nota Kasir atas nama: ${pelanggan} via ${metode}`, 'Masuk', total);
+            
+            alert(`🎉 Pembayaran Sukses!\nTotal Tagihan Rp ${total.toLocaleString('id-ID')} telah dicatat di Buku Keuangan.`);
+            
+            keranjang = {};
+            document.getElementById('pos-pelanggan').value = '';
+            updateKeranjang();
+        }
+
+        function prosesKulakanKePembukuan() {
+            let supplier = document.getElementById('kulakan-supplier').value;
+            let item = document.getElementById('kulakan-item').value;
+            let harga = document.getElementById('kulakan-harga').value;
+            let metode = document.getElementById('kulakan-metode').value;
+
+            if (!item || !harga) {
+                alert('Detail item kulakan dan nominal harganya diisi lengkap dulu bos!');
+                return;
+            }
+
+            // Masuk pembukuan otomatis (Keluar)
+            masukkanKeJurnal('Restock Bahan', `Beli [ ${item} ] ke ${supplier} (${metode})`, 'Keluar', harga);
+
+            alert('✅ Nota kulakan berhasil disimpan dan memotong saldo kas di pembukuan!');
+            
+            document.getElementById('kulakan-item').value = '';
+            document.getElementById('kulakan-harga').value = '';
+        }
+
+        function tambahKeKeranjang(nama, harga) {
+            if (keranjang[nama]) { keranjang[nama].qty += 1; } 
+            else { keranjang[nama] = { harga: harga, qty: 1 }; }
+            updateKeranjang();
+        }
+
+        function updateKeranjang() {
+            const list = document.getElementById('keranjang-list');
+            list.innerHTML = ''; 
+            total = 0;
+            
+            if (Object.keys(keranjang).length === 0) {
+                list.innerHTML = '<p style="color:#aaa; font-size:13px; text-align:center; padding:20px 0;">Belum ada pesanan.</p>';
+                document.getElementById('total-harga').innerText = 'Rp 0'; 
+                return;
+            }
+            for (let nama in keranjang) {
+                let item = keranjang[nama]; 
+                let subtotal = item.harga * item.qty; 
+                total += subtotal;
+                list.innerHTML += `<div class="keranjang-item"><div><strong>${nama}</strong><br><small>${item.qty} x Rp ${item.harga.toLocaleString('id-ID')}</small></div><div>Rp ${subtotal.toLocaleString('id-ID')}</div></div>`;
+            }
+            document.getElementById('total-harga').innerText = 'Rp ' + total.toLocaleString('id-ID');
+            sinkronisasiNamaStruk();
+        }
+
+        function sinkronisasiNamaStruk() {
+            let tgl = document.getElementById('pos-tanggal').value;
+            let pelanggan = document.getElementById('pos-pelanggan').value || 'Pelanggan Umum';
+            let metode = document.getElementById('pos-metode').value;
+            document.getElementById('print-tanggal-nota').innerText = `Tanggal   : ${tgl}`;
+            document.getElementById('print-nama-nota').innerText =   `Pembeli   : ${pelanggan}`;
+            document.getElementById('print-metode-nota').innerText = `Metode    : ${metode}`;
+        }
+
+        function filterMenuWarkop() {
+            let input = document.getElementById('input-cari-menu').value.toLowerCase();
+            let barisMenu = document.getElementsByClassName('menu-item-row');
+            for (let i = 0; i < barisMenu.length; i++) {
+                let namaMenu = barisMenu[i].getElementsByTagName('h4')[0].innerText.toLowerCase();
+                if (namaMenu.includes(input)) barisMenu[i].classList.remove('menu-row-hidden');
+                else barisMenu[i].classList.add('menu-row-hidden');
+            }
+        }
+
+        function pindahHalaman(idBagian, idMenu) {
+            document.getElementById(idBagian).scrollIntoView({ behavior: 'smooth' });
+            document.querySelectorAll('.sidebar menu li').forEach(li => li.classList.remove('active'));
+            document.getElementById(idMenu).classList.add('active');
+        }
+
+        function tambahStok() {
+            let nama = document.getElementById('inv-nama').value;
+            let jumlah = document.getElementById('inv-jumlah').value;
+            let jenis = document.getElementById('inv-jenis').value;
+            let catatan = document.getElementById('inv-catatan').value || '-';
+            if (!nama || !jumlah) { alert('Isi data logistik dulu!'); return; }
+            
+            let tgl = new Date();
+            let tglStr = `${tgl.getFullYear()}-${String(tgl.getMonth() + 1).padStart(2, '0')}-${String(tgl.getDate()).padStart(2, '0')}`;
+            
+            let barisBaru = `<tr><td>${tglStr}</td><td>${nama}</td><td><span class="badge ${jenis === 'Masuk' ? 'badge-masuk' : 'badge-keluar'}">${jenis}</span></td><td>${jumlah}</td><td>${catatan}</td></tr>`;
+            document.getElementById('tabel-stok').insertAdjacentHTML('afterbegin', barisBaru);
+            document.getElementById('inv-nama').value = ''; 
+            document.getElementById('inv-jumlah').value = ''; 
+            document.getElementById('inv-catatan').value = '';
+            alert('Log data stok diperbarui!');
+        }
+    </script>
+</body>
+</html>
